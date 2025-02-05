@@ -2,7 +2,13 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
-First, run the development server:
+Instalar Bootstrap:
+npm i boostrap
+
+Instalar react-router-dom:
+npm install react-router-dom
+
+Para iniciar:
 
 ```bash
 npm run dev
