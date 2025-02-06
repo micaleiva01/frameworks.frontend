@@ -1,13 +1,12 @@
 import React from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import MyNavbar from "./layout/Navbar";
-import Peliculas from "./peliculas/Peliculas";
+import Movies from "./movies/Movies";
 
 function Home() {
   return (
     <div>
-      <MyNavbar />
-      <Peliculas />
+      <Movies />
     </div>
   );
 }

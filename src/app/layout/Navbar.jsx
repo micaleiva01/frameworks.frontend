@@ -6,9 +6,7 @@ export default function MyNavbar() {
     <div>
       <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
         <div className="container-fluid">
-          <h1 className="navbar-brand">
-            GESTIÓN DE PELICULAS
-          </h1>
+          <h1 className="navbar-brand">GESTIÓN DE PELÍCULAS</h1>
           <button
             className="navbar-toggler"
             type="button"
@@ -22,9 +20,22 @@ export default function MyNavbar() {
           </button>
           <div className="collapse navbar-collapse" id="navbarSupportedContent">
             <ul className="navbar-nav ms-auto">
+              {/* Link to Movie List */}
+              <li className="nav-item me-2">
+                <Link href="/" passHref>
+                  <button className="btn btn-outline-light">Películas</button>
+                </Link>
+              </li>
+              {/* Link to Actor List */}
+              <li className="nav-item me-2">
+                <Link href="/actors" passHref>
+                  <button className="btn btn-outline-light">Actores</button>
+                </Link>
+              </li>
+              {/* Login Button */}
               <li className="nav-item">
                 <Link href="/login" passHref>
-                  <button className="btn btn-outline-light">Iniciar Sesión</button>
+                  <button className="btn btn-light">Iniciar Sesión</button>
                 </Link>
               </li>
             </ul>
