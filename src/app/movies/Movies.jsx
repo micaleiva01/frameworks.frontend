@@ -59,6 +59,7 @@ const Movies = () => {
   if (loading) return <div className="text-center mt-5">Cargando peliculas...</div>;
   if (error) return <div className="text-center mt-5 text-danger">{error}</div>;
 
+
   return (
     <div className="container mt-4">
       {selectedMovie ? (

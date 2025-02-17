@@ -40,29 +40,35 @@ const EditActor = () => {
     if (id) fetchActor();
   }, [id]);
 
-  // Handle form submission
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await fetch(`http://localhost:8080/actors/${id}`, {
-        method: "PUT", 
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+  
+    const handleSubmit = async (event) => {
+      event.preventDefault();
+      
+      try {
+          const response = await fetch(`http://localhost:8080/actors/${actorId}`, {
+              method: "PUT",
+              headers: {
+                  "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                  name: formData.name,
+                  birthdate: formData.birthdate,
+                  nationality: formData.nationality
+              }),
+          });
 
-      if (!response.ok) {
-        throw new Error(`Error updating actor: ${response.status}`);
+          if (!response.ok) {
+              throw new Error(`Error updating actor: ${response.status}`);
+          }
+
+          console.log("Actor updated successfully");
+      } catch (error) {
+          console.error("Failed to update actor", error);
       }
+    };
 
-      alert("Actor updated successfully!");
-      router.push("/actors"); // Redirect to actors list
-    } catch (err) {
-      console.error("Failed to update actor", err.message);
-      alert("Failed to update actor.");
-    }
-  };
+
+  
 
   if (loading) return <div className="text-center mt-5">Loading actor details...</div>;
   if (error) return <div className="text-center mt-5 text-danger">Error: {error}</div>;

@@ -5,7 +5,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 export default function AddMovie() {
@@ -22,33 +21,43 @@ export default function AddMovie() {
   });
   const [error, setError] = useState("");
 
+
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+    const { name, value } = e.target;
+    setFormData({
+        ...formData,
+        [name]: name === "year" || name === "duration" ? Number(value) : value,
+    });
+};
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
 
-    try {
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setError("");
+
+  try {
       const response = await fetch("http://localhost:8080/movies", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify(formData),
+          method: "POST",
+          headers: {
+              "Content-Type": "application/json" // Make sure there is no charset=UTF-8
+          },
+          body: JSON.stringify(formData),
       });
 
+      const text = await response.text();
+      console.log("Response:", text);
+
       if (!response.ok) {
-        throw new Error("Error al agregar la película");
+          throw new Error("Error al agregar la película: " + text);
       }
 
       router.push("/");
-    } catch (err) {
+  } catch (err) {
+      console.error("Error:", err);
       setError(err.message);
-    }
-  };
+  }
+};
+
 
   return (
     <div className="container mt-5">
@@ -154,11 +163,10 @@ export default function AddMovie() {
           </div>
         </div>
 
-        <button type="submit" className="btn btn-success mt-4" onClick={() => router.push("/")}>
+        <button type="submit" className="btn btn-success mt-4">
           Agregar Película
         </button>
       </form>
-
       <button className="btn btn-secondary mt-3 mb-5" onClick={() => router.push("/")}>
         Volver a la lista de películas
       </button>
