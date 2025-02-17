@@ -32,7 +32,7 @@ export default function EditMovie() {
 
     async function fetchMovie() {
       try {
-        const response = await fetch(`http://localhost:8080/movies/${id}`);
+        const response = await fetch(`http://localhost:8081/movies/${id}`);
         if (!response.ok) throw new Error("Error");
         const movie = await response.json();
         setFormData(movie);

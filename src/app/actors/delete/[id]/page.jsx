@@ -9,7 +9,7 @@ import { useParams, useRouter } from "next/navigation";
 const DeleteActor = () => {
   const params = useParams();
   const router = useRouter();
-  const id = params?.id; // Ensure we get the ID
+  const id = params?.id;
 
   const [actor, setActor] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -20,7 +20,7 @@ const DeleteActor = () => {
 
     const fetchActor = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/actors/${id}`);
+        const response = await fetch(`http://localhost:8081/actors/${id}`);
         if (!response.ok) {
           throw new Error("Actor not found");
         }
@@ -38,7 +38,7 @@ const DeleteActor = () => {
 
   const handleDelete = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/actors/${id}`, {
+      const response = await fetch(`http://localhost:8081/actors/${id}`, {
         method: "DELETE",
       });
 

@@ -36,10 +36,10 @@ const handleSubmit = async (e) => {
   setError("");
 
   try {
-      const response = await fetch("http://localhost:8080/movies", {
+      const response = await fetch("http://localhost:8081/movies", {
           method: "POST",
           headers: {
-              "Content-Type": "application/json" // Make sure there is no charset=UTF-8
+              "Content-Type": "application/json"
           },
           body: JSON.stringify(formData),
       });

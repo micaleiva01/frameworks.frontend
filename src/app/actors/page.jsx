@@ -7,7 +7,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-const API_URL = "http://localhost:8080/actors";
+const API_URL = "http://localhost:8081/actors";
 
 const Actors = () => {
   const [actors, setActors] = useState([]);

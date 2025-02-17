@@ -24,7 +24,7 @@ const EditActor = () => {
   useEffect(() => {
     const fetchActor = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/actors/${id}`);
+        const response = await fetch(`http://localhost:8081/actors/${id}`);
         if (!response.ok) {
           throw new Error("Error fetching actor details");
         }
@@ -45,7 +45,7 @@ const EditActor = () => {
       event.preventDefault();
       
       try {
-          const response = await fetch(`http://localhost:8080/actors/${actorId}`, {
+          const response = await fetch(`http://localhost:8081/actors/${actorId}`, {
               method: "PUT",
               headers: {
                   "Content-Type": "application/json",

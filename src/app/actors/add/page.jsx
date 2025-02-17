@@ -25,7 +25,7 @@ const CreateActor = () => {
     setError("");
 
     try {
-      const response = await fetch("http://localhost:8080/actors", {
+      const response = await fetch("http://localhost:8081/actors", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

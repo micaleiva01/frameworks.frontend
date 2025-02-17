@@ -20,7 +20,7 @@ export default function DeleteMovie() {
 
   const deleteMovie = async (id) => {
     try {
-      const response = await fetch(`http://localhost:8080/movies/${id}`, {
+      const response = await fetch(`http://localhost:8081/movies/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
