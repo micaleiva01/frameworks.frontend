@@ -1,3 +1,6 @@
+
+//EDITAR PELICULA
+
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
@@ -20,54 +23,73 @@ export default function EditMovie() {
   });
   const [error, setError] = useState("");
 
+
   useEffect(() => {
     if (!id) {
-      setError("Movie ID is required");
+      setError("Se requiere ID de la pelicula");
       return;
     }
 
     async function fetchMovie() {
       try {
         const response = await fetch(`http://localhost:8080/movies/${id}`);
-        if (!response.ok) throw new Error("Error fetching movie details");
+        if (!response.ok) throw new Error("Error");
         const movie = await response.json();
         setFormData(movie);
       } catch (err) {
         console.error(err);
-        setError("Could not load movie details.");
+        setError("No se han podido cargar los detalles de la pelicula");
       }
     }
-
     fetchMovie();
   }, [id]);
 
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-
-    try {
-      const response = await fetch(`http://localhost:8080/movies/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (!response.ok) throw new Error("Error updating movie");
-
-      // Redirect back to movies list
-      router.push("/");
-    } catch (err) {
-      console.error(err);
-      setError("Error updating movie.");
+    if (e.target.name === "image") {
+        console.log("Updated image field:", e.target.value); // Debugging line
     }
   };
+
+
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setError("");
+
+  console.log("Before processing:", formData.image); // Debugging line
+
+  if (!formData.image.startsWith("http")) {
+    setFormData({ ...formData, image: `http://localhost:8080/images/${formData.image}` });
+  }
+
+  console.log("Final image sent to backend:", formData.image); // Debugging line
+
+  try {
+    const response = await fetch(`http://localhost:8080/movies/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify(formData),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Error: ${errorText}`);
+    }
+
+    // Redirect back to movies list
+    router.push("/");
+  } catch (err) {
+    console.error("Failed to update movie:", err);
+    setError("Error updating movie. Check console for details.");
+  }
+};
+
+
 
   if (!id) {
     return <div className="text-center mt-5 text-danger">{error}</div>;
