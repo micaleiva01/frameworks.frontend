@@ -36,23 +36,31 @@ const DeleteActor = () => {
     fetchActor();
   }, [id]);
 
+
+
   const handleDelete = async () => {
     try {
       const response = await fetch(`http://localhost:8081/actors/${id}`, {
         method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+        },
+        credentials: "include",
       });
-
+  
       if (!response.ok) {
         throw new Error(`Error deleting actor: ${response.status}`);
       }
-
+  
       alert("Actor deleted successfully!");
-      router.push("/actors"); // Redirect to actor list
+      router.push("/actors");
     } catch (err) {
       console.error("Failed to delete actor", err.message);
       alert("Failed to delete actor.");
     }
   };
+
 
   if (loading) return <div className="text-center mt-5">Loading actor details...</div>;
   if (error) return <div className="text-center mt-5 text-danger">Error: {error}</div>;

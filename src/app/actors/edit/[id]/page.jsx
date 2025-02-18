@@ -1,4 +1,3 @@
-
 //EDITAR ACTOR
 
 "use client";
@@ -20,7 +19,6 @@ const EditActor = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fetch the actor details
   useEffect(() => {
     const fetchActor = async () => {
       try {
@@ -41,34 +39,32 @@ const EditActor = () => {
   }, [id]);
 
   
-    const handleSubmit = async (event) => {
-      event.preventDefault();
-      
-      try {
-          const response = await fetch(`http://localhost:8081/actors/${actorId}`, {
-              method: "PUT",
-              headers: {
-                  "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                  name: formData.name,
-                  birthdate: formData.birthdate,
-                  nationality: formData.nationality
-              }),
-          });
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    
+    try {
+        const response = await fetch(`http://localhost:8081/actors/${id}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                name: formData.name,
+                birthdate: formData.dob,
+                nationality: formData.nationality
+            }),
+        });
 
-          if (!response.ok) {
-              throw new Error(`Error updating actor: ${response.status}`);
-          }
+        if (!response.ok) {
+            throw new Error(`Error updating actor: ${response.status}`);
+        }
 
-          console.log("Actor updated successfully");
-      } catch (error) {
-          console.error("Failed to update actor", error);
-      }
-    };
-
-
-  
+        console.log("Actor updated successfully");
+        router.push("/actors");
+    } catch (error) {
+        console.error("Failed to update actor", error);
+    }
+  };
 
   if (loading) return <div className="text-center mt-5">Loading actor details...</div>;
   if (error) return <div className="text-center mt-5 text-danger">Error: {error}</div>;
