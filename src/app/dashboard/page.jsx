@@ -1,16 +1,43 @@
-import { getUserRole } from "../../utils/auth";
+"use client";
 
-export default function Dashboard() {
-    const role = getUserRole();
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import AdminDashboard from "../components/AdminDashboard";
 
-    return (
-        <div>
-            <h1>Dashboard</h1>
-            {role === "ADMIN" ? (
-                <p>Welcome, Admin! You can manage everything here.</p>
-            ) : (
-                <p>Welcome, User! You can write movie reviews here.</p>
-            )}
-        </div>
-    );
-}
+const Dashboard = () => {
+  const router = useRouter();
+  const [username, setUsername] = useState("");
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      alert("You must be logged in to access the dashboard.");
+      router.push("/login");
+      return;
+    }
+
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    setUsername(payload.sub);
+  }, []);
+
+  const handleLogout = () => {
+    sessionStorage.removeItem("token");
+    sessionStorage.removeItem("role");
+    window.location.href = "/login";
+  };
+
+  return (
+    <section className="container mt-5">
+      <h2>Bienvenido, {username}!</h2>
+
+      <AdminDashboard />
+
+      <button onClick={handleLogout} className="btn btn-danger mt-3">
+        Logout
+      </button>
+    </section>
+  );
+};
+
+export default Dashboard;
