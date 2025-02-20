@@ -141,9 +141,11 @@ const Movies = () => {
                     </p>
 
                     {userRole === "USER" && (
-                      <button className="btn btn-warning mt-2">
-                        Escribir Reseña
-                      </button>
+                      <div className="text-center mt-4">
+                      <Link href={`/reviews/add?movieId=${movie.id}`}>
+                        <button className="btn btn-warning mt-2">Escribir Reseña</button>
+                      </Link>
+                    </div>
                     )}
                   </div>
                 </div>
