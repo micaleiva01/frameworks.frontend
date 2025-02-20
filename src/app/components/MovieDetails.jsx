@@ -11,8 +11,6 @@ const MovieDetails = ({ movie, onBack }) => {
   const [editingReview, setEditingReview] = useState(null);
   const [editComment, setEditComment] = useState("");
   const [editRating, setEditRating] = useState(1);
-
-  // New state for editing movie details
   const [editingMovie, setEditingMovie] = useState(false);
   const [editedMovie, setEditedMovie] = useState(movie);
 
@@ -37,7 +35,7 @@ const MovieDetails = ({ movie, onBack }) => {
       fetch(`http://localhost:8081/reviews/movie/${movie.id}`)
         .then((res) => res.json())
         .then((data) => setReviews(data))
-        .catch((err) => console.error("Error fetching reviews:", err));
+        .catch((err) => console.error("Error:", err));
     }
   }, [movie]);
 
@@ -47,7 +45,7 @@ const MovieDetails = ({ movie, onBack }) => {
     }
   }, [movie, editingMovie]);
 
-  // Updated movie deletion using the correct URL and auto-refresh
+
   const handleDeleteMovie = async () => {
     if (!window.confirm("¿Estás seguro de que deseas eliminar esta película?")) return;
     try {
@@ -57,17 +55,16 @@ const MovieDetails = ({ movie, onBack }) => {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (response.ok) {
-        console.log("Movie deleted");
+        console.log("Pelicula eliminada");
         window.location.reload();
       } else {
-        console.error("Failed to delete movie");
+        console.error("Error al eliminar pelicula");
       }
     } catch (err) {
-      console.error("Error deleting movie:", err);
+      console.error("Error al eliminar pelicula:", err);
     }
   };
 
-  // Updated movie editing using the correct URL and auto-refresh
   const handleEditMovieSave = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -80,13 +77,13 @@ const MovieDetails = ({ movie, onBack }) => {
         body: JSON.stringify(editedMovie),
       });
       if (response.ok) {
-        console.log("Movie updated");
+        console.log("Pelicula actualizada");
         window.location.reload();
       } else {
-        console.error("Failed to update movie");
+        console.error("Error al actualizar pelicula");
       }
     } catch (err) {
-      console.error("Error updating movie:", err);
+      console.error("Error actualizando pelicula:", err);
     }
   };
 
@@ -95,7 +92,6 @@ const MovieDetails = ({ movie, onBack }) => {
     setEditedMovie(movie);
   };
 
-  // Updated review deletion with auto-refresh
   const handleDelete = async (reviewId) => {
     if (!window.confirm("¿Estás seguro de que deseas eliminar esta reseña?")) return;
     try {
@@ -105,17 +101,16 @@ const MovieDetails = ({ movie, onBack }) => {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (response.ok) {
-        console.log("Review deleted");
+        console.log("Reseña eliminada");
         window.location.reload();
       } else {
-        console.error("Failed to delete review");
+        console.error("Error al eliminar reseña");
       }
     } catch (err) {
-      console.error("Error deleting review:", err);
+      console.error("Error:", err);
     }
   };
 
-  // Updated review editing with auto-refresh
   const handleEditSave = async (reviewId) => {
     try {
       const token = localStorage.getItem("token");
@@ -131,10 +126,10 @@ const MovieDetails = ({ movie, onBack }) => {
         console.log("Review updated");
         window.location.reload();
       } else {
-        console.error("Failed to update review");
+        console.error("Error");
       }
     } catch (err) {
-      console.error("Error updating review:", err);
+      console.error("Error:", err);
     }
   };
 
@@ -268,6 +263,26 @@ const MovieDetails = ({ movie, onBack }) => {
               </>
             )}
 
+            <h2 className="text-2xl font-semibold mt-4">Actores</h2>
+            {movie.actors && movie.actors.length > 0 ? (
+              <div className="row">
+                {movie.actors.map((actor) => (
+                  <div key={actor.id} className="col-md-4 col-sm-6 mb-3">
+                    <div className="card shadow-sm h-100">
+                      <div className="card-body text-center">
+                        <h5 className="card-title">{actor.name}</h5>
+                        <p className="card-text">
+                          <strong>Nacionalidad:</strong> {actor.nationality}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-muted">No hay actores asociados a esta película.</p>
+            )}
+
             <h2 className="text-2xl font-semibold mt-4">Reseñas</h2>
             {reviews.length > 0 ? (
               <ul className="list-group mt-3">
@@ -307,12 +322,16 @@ const MovieDetails = ({ movie, onBack }) => {
 
                     {(userRole === "ADMIN" || username === review.username) && !editingReview && (
                       <div>
+                        {username === review.username && !editingReview && (
                         <button className="btn btn-warning btn-sm me-2" onClick={() => handleEditClick(review)}>
                           Editar
                         </button>
+                      )}
+                      {(userRole === "ADMIN" || username === review.username) && !editingReview && (
                         <button className="btn btn-danger btn-sm" onClick={() => handleDelete(review.id)}>
                           Eliminar
                         </button>
+                      )}
                       </div>
                     )}
                   </li>

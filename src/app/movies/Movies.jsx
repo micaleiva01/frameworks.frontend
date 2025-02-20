@@ -40,7 +40,7 @@ const Movies = () => {
 
     if (!token) {
       console.log("No se ha podido iniciar sesion.");
-      setUserRole(null); // publico
+      setUserRole(null); // público
       return;
     }
 
@@ -54,14 +54,17 @@ const Movies = () => {
     }
   };
 
+  // UPDATED: Modified handleSearch to always use the "query" parameter.
+  // This allows users to type an actor's name (e.g. "Anne Hathaway") and retrieve the matching movie (e.g. "Interstellar"),
+  // assuming the backend search logic supports actor name searches.
   const handleSearch = async () => {
     if (!searchQuery.trim()) {
       fetchMovies();
       return;
     }
-
     try {
-      const response = await fetch(`http://localhost:8081/movies/search?query=${encodeURIComponent(searchQuery)}`);
+      const url = `http://localhost:8081/movies/search?query=${encodeURIComponent(searchQuery)}`;
+      const response = await fetch(url);
       if (!response.ok) {
         throw new Error("Error al buscar películas");
       }
@@ -90,9 +93,6 @@ const Movies = () => {
       ) : (
         <>
           <h2 className="text-center mb-4">PELICULAS</h2>
-          {/* <p>user role is: {userRole}</p> */}
-
-          {/* buscador */}
           <div className="row mb-4">
             <div className="col-md-10">
               <input
@@ -110,13 +110,10 @@ const Movies = () => {
             </div>
           </div>
 
-          {/* listado de Películas */}
+          {/* Listado de Películas */}
           <div className="row">
             {movies.map((movie) => (
-              <div
-                key={movie.id}
-                className="col-md-4 col-sm-6 mb-4 movie-card"
-              >
+              <div key={movie.id} className="col-md-4 col-sm-6 mb-4 movie-card">
                 <div
                   className="card shadow-sm"
                   style={{
@@ -139,13 +136,12 @@ const Movies = () => {
                     <p className="card-text">
                       <strong>Duración:</strong> {movie.duration} minutos
                     </p>
-
                     {userRole === "USER" && (
                       <div className="text-center mt-4">
-                      <Link href={`/reviews/add?movieId=${movie.id}`}>
-                        <button className="btn btn-warning mt-2">Escribir Reseña</button>
-                      </Link>
-                    </div>
+                        <Link href={`/reviews/add?movieId=${movie.id}`}>
+                          <button className="btn btn-warning mt-2">Escribir Reseña</button>
+                        </Link>
+                      </div>
                     )}
                   </div>
                 </div>

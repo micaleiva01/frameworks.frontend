@@ -1,53 +1,57 @@
 "use client";
 
 import React, { useState } from "react";
+import Registration from "../users/registration";
 
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-
+  const [showRegistration, setShowRegistration] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
     try {
-        const res = await fetch("http://localhost:8081/users/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username, password }),
-        });
+      const res = await fetch("http://localhost:8081/users/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      });
 
-        const data = await res.json();
-        console.log("Full Backend Response:", data);
+      const data = await res.json();
+      console.log("Full Backend Response:", data);
 
-        if (!res.ok || !data.token || data.token.includes("No se ha encontrado usuario")) {
-            console.error("Login Failed:", data);
-            alert("Invalid username or password");
-            return;
-        }
+      if (!res.ok || !data.token || data.token.includes("No se ha encontrado usuario")) {
+        console.error("Login Failed:", data);
+        alert("Invalid username or password");
+        return;
+      }
 
-        console.log("Token received:", data.token);
-        localStorage.setItem("token", data.token);
+      console.log("Token received:", data.token);
+      localStorage.setItem("token", data.token);
 
-        try {
-            const payload = JSON.parse(atob(data.token.split(".")[1]));
-            console.log("Decoded Payload:", payload);
+      try {
+        const payload = JSON.parse(atob(data.token.split(".")[1]));
+        console.log("Decoded Payload:", payload);
 
-            const userRole = payload.role || "USER";
-            console.log("User Role:", userRole);
+        const userRole = payload.role || "USER";
+        console.log("User Role:", userRole);
 
-            window.location.href = userRole === "ADMIN" ? "/dashboard" : "/movies";
-        } catch (decodeError) {
-            console.error("Error decoding JWT:", decodeError);
-            alert("Login successful, but an error occurred. Try again.");
-        }
-
+        window.location.href = userRole === "ADMIN" ? "/dashboard" : "/movies";
+      } catch (decodeError) {
+        console.error("Error decoding JWT:", decodeError);
+        alert("Login successful, but an error occurred. Try again.");
+      }
     } catch (error) {
-        console.error("Error during login:", error);
-        alert("Error processing login. Please try again.");
+      console.error("Error during login:", error);
+      alert("Error processing login. Please try again.");
     }
   };
 
+  // If the user clicks "aquí", render the Registration component
+  if (showRegistration) {
+    return <Registration />;
+  }
 
   return (
     <section className="vh-100">
@@ -89,8 +93,16 @@ const Login = () => {
                   <button className="btn btn-outline-light btn-lg px-5" type="submit">
                     Login
                   </button>
-
                 </form>
+                <p className="mt-3">
+                  Si no tienes cuenta, registrate{" "}
+                  <span
+                    style={{ cursor: "pointer", textDecoration: "underline" }}
+                    onClick={() => setShowRegistration(true)}
+                  >
+                    aquí
+                  </span>
+                </p>
               </div>
             </div>
           </div>
