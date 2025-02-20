@@ -6,10 +6,10 @@
 import { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-const API_URL = "http://localhost:8081/users";
+const API_URL = "http://localhost:8081/users/userlist";
 
 const Users = () => {
-    
+
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -46,7 +46,7 @@ const Users = () => {
       const payload = JSON.parse(atob(token.split(".")[1]));
       setUserRole(payload.role);
     } catch (err) {
-      console.error("Error decoding token:", err);
+      console.error("Error obteniendo token:", err);
       setUserRole(null);
     }
   };
@@ -67,6 +67,7 @@ const Users = () => {
   };
 
   const promoteToAdmin = async (id) => {
+    console.log("Promoting user ID:", id);
     try {
       const response = await fetch(`${API_URL}/${id}/promote`, {
         method: "PUT",
@@ -80,6 +81,7 @@ const Users = () => {
       alert(err.message);
     }
   };
+  
 
   if (loading) return <div className="text-center mt-5">Cargando usuarios...</div>;
   if (error) return <div className="text-center mt-5 text-danger">{error}</div>;
