@@ -12,6 +12,10 @@ const MovieDetails = ({ movie, onBack }) => {
   const [editComment, setEditComment] = useState("");
   const [editRating, setEditRating] = useState(1);
 
+  // New state for editing movie details
+  const [editingMovie, setEditingMovie] = useState(false);
+  const [editedMovie, setEditedMovie] = useState(movie);
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -37,6 +41,61 @@ const MovieDetails = ({ movie, onBack }) => {
     }
   }, [movie]);
 
+  useEffect(() => {
+    if (!editingMovie) {
+      setEditedMovie(movie);
+    }
+  }, [movie, editingMovie]);
+
+  // Updated movie deletion using the correct URL and auto-refresh
+  const handleDeleteMovie = async () => {
+    if (!window.confirm("¿Estás seguro de que deseas eliminar esta película?")) return;
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(`http://localhost:8081/movies/${movie.id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (response.ok) {
+        console.log("Movie deleted");
+        window.location.reload();
+      } else {
+        console.error("Failed to delete movie");
+      }
+    } catch (err) {
+      console.error("Error deleting movie:", err);
+    }
+  };
+
+  // Updated movie editing using the correct URL and auto-refresh
+  const handleEditMovieSave = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(`http://localhost:8081/movies/${movie.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(editedMovie),
+      });
+      if (response.ok) {
+        console.log("Movie updated");
+        window.location.reload();
+      } else {
+        console.error("Failed to update movie");
+      }
+    } catch (err) {
+      console.error("Error updating movie:", err);
+    }
+  };
+
+  const handleEditMovieCancel = () => {
+    setEditingMovie(false);
+    setEditedMovie(movie);
+  };
+
+  // Updated review deletion with auto-refresh
   const handleDelete = async (reviewId) => {
     if (!window.confirm("¿Estás seguro de que deseas eliminar esta reseña?")) return;
     try {
@@ -46,12 +105,36 @@ const MovieDetails = ({ movie, onBack }) => {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (response.ok) {
-        setReviews(reviews.filter((review) => review.id !== reviewId));
+        console.log("Review deleted");
+        window.location.reload();
       } else {
         console.error("Failed to delete review");
       }
     } catch (err) {
       console.error("Error deleting review:", err);
+    }
+  };
+
+  // Updated review editing with auto-refresh
+  const handleEditSave = async (reviewId) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(`http://localhost:8081/reviews/${reviewId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ rating: editRating, comment: editComment }),
+      });
+      if (response.ok) {
+        console.log("Review updated");
+        window.location.reload();
+      } else {
+        console.error("Failed to update review");
+      }
+    } catch (err) {
+      console.error("Error updating review:", err);
     }
   };
 
@@ -65,33 +148,6 @@ const MovieDetails = ({ movie, onBack }) => {
     setEditingReview(null);
     setEditComment("");
     setEditRating(1);
-  };
-
-  const handleEditSave = async (reviewId) => {
-    try {
-      const token = localStorage.getItem("token");
-      const response = await fetch(`http://localhost:8081/reviews/${reviewId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ rating: editRating, comment: editComment }),
-      });
-
-      if (response.ok) {
-        setReviews(
-          reviews.map((review) =>
-            review.id === reviewId ? { ...review, rating: editRating, comment: editComment } : review
-          )
-        );
-        setEditingReview(null);
-      } else {
-        console.error("Failed to update review");
-      }
-    } catch (err) {
-      console.error("Error updating review:", err);
-    }
   };
 
   if (!movie) {
@@ -110,13 +166,107 @@ const MovieDetails = ({ movie, onBack }) => {
             <img src={movie.image} className="img-fluid rounded" alt={movie.name} />
           </div>
           <div className="col-md-8">
-            <h2>{movie.title}</h2>
-            <p><strong>Duración:</strong> {movie.duration} minutos</p>
-            <p><strong>Año:</strong> {movie.year}</p>
-            <p><strong>País:</strong> {movie.country}</p>
-            <p><strong>Director:</strong> {movie.director}</p>
-            <p><strong>Género:</strong> {movie.genre}</p>
-            <p><strong>Sinopsis:</strong> {movie.synopsis}</p>
+            {editingMovie ? (
+              <div className="mb-3">
+                <input
+                  type="text"
+                  className="form-control mb-2"
+                  value={editedMovie.title || ""}
+                  onChange={(e) =>
+                    setEditedMovie({ ...editedMovie, title: e.target.value })
+                  }
+                  placeholder="Título"
+                />
+                <input
+                  type="text"
+                  className="form-control mb-2"
+                  value={editedMovie.duration || ""}
+                  onChange={(e) =>
+                    setEditedMovie({ ...editedMovie, duration: e.target.value })
+                  }
+                  placeholder="Duración (minutos)"
+                />
+                <input
+                  type="text"
+                  className="form-control mb-2"
+                  value={editedMovie.year || ""}
+                  onChange={(e) =>
+                    setEditedMovie({ ...editedMovie, year: e.target.value })
+                  }
+                  placeholder="Año"
+                />
+                <input
+                  type="text"
+                  className="form-control mb-2"
+                  value={editedMovie.country || ""}
+                  onChange={(e) =>
+                    setEditedMovie({ ...editedMovie, country: e.target.value })
+                  }
+                  placeholder="País"
+                />
+                <input
+                  type="text"
+                  className="form-control mb-2"
+                  value={editedMovie.director || ""}
+                  onChange={(e) =>
+                    setEditedMovie({ ...editedMovie, director: e.target.value })
+                  }
+                  placeholder="Director"
+                />
+                <input
+                  type="text"
+                  className="form-control mb-2"
+                  value={editedMovie.genre || ""}
+                  onChange={(e) =>
+                    setEditedMovie({ ...editedMovie, genre: e.target.value })
+                  }
+                  placeholder="Género"
+                />
+                <textarea
+                  className="form-control mb-2"
+                  value={editedMovie.synopsis || ""}
+                  onChange={(e) =>
+                    setEditedMovie({ ...editedMovie, synopsis: e.target.value })
+                  }
+                  placeholder="Sinopsis"
+                />
+                <input
+                  type="text"
+                  className="form-control mb-2"
+                  value={editedMovie.image || ""}
+                  onChange={(e) =>
+                    setEditedMovie({ ...editedMovie, image: e.target.value })
+                  }
+                  placeholder="URL de la imagen"
+                />
+                <button className="btn btn-success me-2" onClick={handleEditMovieSave}>
+                  Guardar
+                </button>
+                <button className="btn btn-secondary" onClick={handleEditMovieCancel}>
+                  Cancelar
+                </button>
+              </div>
+            ) : (
+              <>
+                <h2>{movie.title}</h2>
+                {userRole === "ADMIN" && (
+                  <div className="mb-3">
+                    <button className="btn btn-warning me-2" onClick={() => setEditingMovie(true)}>
+                      Editar Película
+                    </button>
+                    <button className="btn btn-danger" onClick={handleDeleteMovie}>
+                      Eliminar Película
+                    </button>
+                  </div>
+                )}
+                <p><strong>Duración:</strong> {movie.duration} minutos</p>
+                <p><strong>Año:</strong> {movie.year}</p>
+                <p><strong>País:</strong> {movie.country}</p>
+                <p><strong>Director:</strong> {movie.director}</p>
+                <p><strong>Género:</strong> {movie.genre}</p>
+                <p><strong>Sinopsis:</strong> {movie.synopsis}</p>
+              </>
+            )}
 
             <h2 className="text-2xl font-semibold mt-4">Reseñas</h2>
             {reviews.length > 0 ? (
@@ -141,8 +291,12 @@ const MovieDetails = ({ movie, onBack }) => {
                           <textarea className="form-control" value={editComment} onChange={(e) => setEditComment(e.target.value)} />
                         </div>
 
-                        <button className="btn btn-success btn-sm me-2" onClick={() => handleEditSave(review.id)}>Guardar</button>
-                        <button className="btn btn-secondary btn-sm" onClick={handleEditCancel}>Cancelar</button>
+                        <button className="btn btn-success btn-sm me-2" onClick={() => handleEditSave(review.id)}>
+                          Guardar
+                        </button>
+                        <button className="btn btn-secondary btn-sm" onClick={handleEditCancel}>
+                          Cancelar
+                        </button>
                       </div>
                     ) : (
                       <div>
@@ -153,8 +307,12 @@ const MovieDetails = ({ movie, onBack }) => {
 
                     {(userRole === "ADMIN" || username === review.username) && !editingReview && (
                       <div>
-                        <button className="btn btn-warning btn-sm me-2" onClick={() => handleEditClick(review)}>Editar</button>
-                        <button className="btn btn-danger btn-sm" onClick={() => handleDelete(review.id)}>Eliminar</button>
+                        <button className="btn btn-warning btn-sm me-2" onClick={() => handleEditClick(review)}>
+                          Editar
+                        </button>
+                        <button className="btn btn-danger btn-sm" onClick={() => handleDelete(review.id)}>
+                          Eliminar
+                        </button>
                       </div>
                     )}
                   </li>

@@ -90,7 +90,7 @@ const Movies = () => {
       ) : (
         <>
           <h2 className="text-center mb-4">PELICULAS</h2>
-          <p>user role is: {userRole}</p>
+          {/* <p>user role is: {userRole}</p> */}
 
           {/* buscador */}
           <div className="row mb-4">

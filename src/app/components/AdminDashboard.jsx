@@ -35,9 +35,6 @@ const AdminDashboard = () => {
             <button onClick={() => window.location.href = "/actors"} className="btn btn-outline-dark w-100 p-2 m-2">
             Gestionar Actores
             </button>
-            <button onClick={() => window.location.href = "/manage-reviews"} className="btn btn-outline-dark w-100 p-2 m-2">
-            Gestionar Reseñas
-            </button>
             <button onClick={() => window.location.href = "/users"} className="btn btn-outline-dark w-100 p-2 m-2">
             Gestionar Usuarios
             </button>
