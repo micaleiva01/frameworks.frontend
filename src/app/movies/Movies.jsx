@@ -24,7 +24,7 @@ const Movies = () => {
     try {
       const response = await fetch(API_URL);
       if (!response.ok) {
-        throw new Error("Error al cargar peliculas");
+        throw new Error("Error al cargar películas");
       }
       const data = await response.json();
       setMovies(data);
@@ -39,17 +39,17 @@ const Movies = () => {
     const token = localStorage.getItem("token");
 
     if (!token) {
-      console.log("No token found. User is not logged in.");
-      setUserRole(null); //publico
+      console.log("No se ha podido iniciar sesion.");
+      setUserRole(null); // publico
       return;
     }
 
     try {
       const payload = JSON.parse(atob(token.split(".")[1]));
-      console.log("Decoded Token Payload:", payload);
+      console.log(payload);
       setUserRole(payload.role);
     } catch (err) {
-      console.error("Error decoding token:", err);
+      console.error(err);
       setUserRole(null);
     }
   };
@@ -76,18 +76,23 @@ const Movies = () => {
     setSearchQuery(e.target.value);
   };
 
-  if (loading) return <div className="text-center mt-5">Cargando peliculas...</div>;
+  if (loading) return <div className="text-center mt-5">Cargando películas...</div>;
   if (error) return <div className="text-center mt-5 text-danger">{error}</div>;
 
   return (
     <div className="container mt-4">
       {selectedMovie ? (
-        <MovieDetails movie={selectedMovie} onBack={() => setSelectedMovie(null)} />
+        <MovieDetails
+          movie={selectedMovie}
+          onBack={() => setSelectedMovie(null)}
+          userRole={userRole}
+        />
       ) : (
         <>
           <h2 className="text-center mb-4">PELICULAS</h2>
+          <p>user role is: {userRole}</p>
 
-          {/* Buscador */}
+          {/* buscador */}
           <div className="row mb-4">
             <div className="col-md-10">
               <input
@@ -105,18 +110,18 @@ const Movies = () => {
             </div>
           </div>
 
-          {/* Listado de Películas */}
+          {/* listado de Películas */}
           <div className="row">
             {movies.map((movie) => (
               <div
                 key={movie.id}
                 className="col-md-4 col-sm-6 mb-4 movie-card"
-                style={{ cursor: "pointer" }}
               >
                 <div
                   className="card shadow-sm"
                   style={{
                     transition: "transform 0.2s, box-shadow 0.2s",
+                    cursor: "pointer"
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.transform = "scale(1.05)";
@@ -126,6 +131,7 @@ const Movies = () => {
                     e.currentTarget.style.transform = "scale(1)";
                     e.currentTarget.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.1)";
                   }}
+                  onClick={() => setSelectedMovie(movie)}
                 >
                   <img src={movie.image} alt={movie.title} style={{ objectFit: "cover" }} />
                   <div className="card-body text-center">
@@ -134,7 +140,7 @@ const Movies = () => {
                       <strong>Duración:</strong> {movie.duration} minutos
                     </p>
 
-                    {userRole && userRole.toUpperCase() === "USER" && (
+                    {userRole === "USER" && (
                       <button className="btn btn-warning mt-2">
                         Escribir Reseña
                       </button>
@@ -145,11 +151,13 @@ const Movies = () => {
             ))}
           </div>
 
-          <div className="text-center mt-4">
-            <Link href="/movies/add">
-              <button className="btn btn-primary mt-4">Agregar Película</button>
-            </Link>
-          </div>
+          {userRole === "ADMIN" && (
+            <div className="text-center mt-4">
+              <Link href="/movies/add">
+                <button className="btn btn-primary m-4">Agregar Película</button>
+              </Link>
+            </div>
+          )}
         </>
       )}
     </div>

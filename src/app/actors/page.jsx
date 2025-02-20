@@ -14,6 +14,25 @@ const Actors = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const [userRole, setUserRole] = useState(null);
+  
+    useEffect(() => {
+      const token = localStorage.getItem("token");
+  
+      if (!token) {
+        setUserRole(null);
+        return;
+      }
+  
+      try {
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        setUserRole(payload.role);
+      } catch (err) {
+        console.error("Error:", err);
+        setUserRole(null);
+      }
+    }, [])
+
   useEffect(() => {
     fetchActors();
   }, []);
@@ -62,29 +81,33 @@ const Actors = () => {
             <div className="card-body text-center">
               <h5 className="card-title">{actor.name}</h5>
               <p className="card-text">
-                <strong>Fecha de Nacimiento:</strong> {actor.dob}
+                <strong>Fecha de Nacimiento:</strong> {actor.birthdate ? actor.birthdate : "No disponible"}
               </p>
               <p className="card-text">
                 <strong>Nacionalidad:</strong> {actor.nationality}
               </p>
             </div>
-            <div className="d-flex justify-content-center mt-3">
-              <Link href={`/actors/edit/${actor.id}`}>
-                <button className="btn btn-warning m-1">Editar</button>
-              </Link>
-              <Link href={`/actors/delete/${actor.id}`}>
-                <button className="btn btn-danger m-1">Eliminar</button>
-              </Link>
-            </div>
+            {userRole === "ADMIN" && (
+                <div className="d-flex justify-content-center mt-3">
+                  <Link href={`/actors/edit/${actor.id}`}>
+                    <button className="btn btn-warning m-1">Editar</button>
+                  </Link>
+                  <Link href={`/actors/delete/${actor.id}`}>
+                    <button className="btn btn-danger m-1">Eliminar</button>
+                  </Link>
+                </div>
+              )}
           </div>
         </div>        
         ))}
       </div>
-      <div className="text-center mt-4">
-        <Link href="/actors/add">
-          <button className="btn btn-primary">Añadir Actor</button>
-        </Link>
-      </div>
+      {userRole === "ADMIN" && (
+        <div className="text-center mt-4">
+          <Link href="/actors/add">
+            <button className="btn btn-primary">Añadir Actor</button>
+          </Link>
+        </div>
+      )}
     </div>
   );
 };

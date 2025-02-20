@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const AdminDashboard = () => {
 
@@ -27,21 +28,20 @@ const AdminDashboard = () => {
 
   return (
     <div className="container mt-5">
-      <h1 className="mb-4">BIENVENIDO/A ADMINISTRADOR</h1>
-      <div className="list-group">
-        <a href="/manage-movies" className="list-group-item list-group-item-action">
-          Gestionar Películas
-        </a>
-        <a href="/manage-actors" className="list-group-item list-group-item-action">
-          Gestionar Actores
-        </a>
-        <a href="/manage-reviews" className="list-group-item list-group-item-action">
-          Gestionar Reseñas
-        </a>
-        <a href="/manage-users" className="list-group-item list-group-item-action">
-          Gestionar Usuarios
-        </a>
-      </div>
+        <div className="list-group">
+            <button onClick={() => window.location.href = "/movies"} className="btn btn-outline-dark w-100 p-2 m-2">
+            Gestionar Películas
+            </button>
+            <button onClick={() => window.location.href = "/actors"} className="btn btn-outline-dark w-100 p-2 m-2">
+            Gestionar Actores
+            </button>
+            <button onClick={() => window.location.href = "/manage-reviews"} className="btn btn-outline-dark w-100 p-2 m-2">
+            Gestionar Reseñas
+            </button>
+            <button onClick={() => window.location.href = "/users"} className="btn btn-outline-dark w-100 p-2 m-2">
+            Gestionar Usuarios
+            </button>
+        </div>
     </div>
   );
 };

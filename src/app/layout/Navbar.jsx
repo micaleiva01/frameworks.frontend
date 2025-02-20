@@ -9,16 +9,35 @@ export default function MyNavbar() {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const router = useRouter();
 
+  const [userRole, setUserRole] = useState(null);
+
   useEffect(() => {
     const token = localStorage.getItem("token");
-    setIsLoggedIn(!!token); // If token exists, user is logged in
+
+    if (!token) {
+      setUserRole(null);
+      return;
+    }
+
+    try {
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      setUserRole(payload.role);
+    } catch (err) {
+      console.error("Error:", err);
+      setUserRole(null);
+    }
+  }, [])
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setIsLoggedIn(!!token);
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("token"); // Remove token
+    localStorage.removeItem("token");
     setIsLoggedIn(false);
-    setShowLogoutModal(false); // Close modal
-    router.push("/login"); // Redirect to login page
+    setShowLogoutModal(false);
+    router.push("/login");
   };
 
   return (
@@ -39,19 +58,27 @@ export default function MyNavbar() {
           </button>
           <div className="collapse navbar-collapse" id="navbarSupportedContent">
             <ul className="navbar-nav ms-auto">
-              {/* Link to Movie List */}
+
               <li className="nav-item me-2">
                 <Link href="/" passHref>
                   <button className="btn btn-outline-light">Películas</button>
                 </Link>
               </li>
-              {/* Link to Actor List */}
+
               <li className="nav-item me-2">
                 <Link href="/actors" passHref>
                   <button className="btn btn-outline-light">Actores</button>
                 </Link>
               </li>
-              {/* Show "Cerrar Sesión" if logged in, otherwise "Iniciar Sesión" */}
+
+              {userRole === "ADMIN" && (
+                <li className="nav-item me-2">
+                  <Link href="/dashboard" passHref>
+                    <button className="btn btn-outline-light">Panel</button>
+                  </Link>
+                </li>
+              )}
+
               <li className="nav-item">
                 {isLoggedIn ? (
                   <button
@@ -71,7 +98,6 @@ export default function MyNavbar() {
         </div>
       </nav>
 
-      {/* Logout Confirmation Modal */}
       {showLogoutModal && (
         <div
           className="modal d-block"

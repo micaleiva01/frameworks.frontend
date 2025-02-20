@@ -48,7 +48,7 @@ export default function EditMovie() {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     if (e.target.name === "image") {
-        console.log("Updated image field:", e.target.value); // Debugging line
+        console.log("Updated image field:", e.target.value);
     }
   };
 
@@ -58,16 +58,16 @@ const handleSubmit = async (e) => {
   e.preventDefault();
   setError("");
 
-  console.log("Before processing:", formData.image); // Debugging line
+  console.log("Before processing:", formData.image);
 
   if (!formData.image.startsWith("http")) {
-    setFormData({ ...formData, image: `http://localhost:8080/images/${formData.image}` });
+    setFormData({ ...formData, image: `http://localhost:8081/images/${formData.image}` });
   }
 
-  console.log("Final image sent to backend:", formData.image); // Debugging line
+  console.log("Final image sent to backend:", formData.image);
 
   try {
-    const response = await fetch(`http://localhost:8080/movies/${id}`, {
+    const response = await fetch(`http://localhost:8081/movies/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -81,7 +81,6 @@ const handleSubmit = async (e) => {
       throw new Error(`Error: ${errorText}`);
     }
 
-    // Redirect back to movies list
     router.push("/");
   } catch (err) {
     console.error("Failed to update movie:", err);
