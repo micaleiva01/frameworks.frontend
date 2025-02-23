@@ -48,7 +48,6 @@ const Login = () => {
     }
   };
 
-  // If the user clicks "aquí", render the Registration component
   if (showRegistration) {
     return <Registration />;
   }
@@ -61,8 +60,8 @@ const Login = () => {
             <div className="card bg-dark text-white" style={{ borderRadius: "1rem" }}>
               <div className="card-body p-5 text-center">
                 <form onSubmit={handleLogin}>
-                  <h2 className="fw-bold mb-2 text-uppercase">Login</h2>
-                  <p className="text-white-50 mb-5">Please enter your login and password!</p>
+                  <h2 className="fw-bold mb-2 text-uppercase">Iniciar Sesión</h2>
+                  <p className="text-white-50 mb-5">Por favor ingresar nombre de usuario y contraseña</p>
 
                   <div className="form-outline form-white mb-4">
                     <input
@@ -73,7 +72,7 @@ const Login = () => {
                       onChange={(e) => setUsername(e.target.value)}
                     />
                     <label className="form-label" htmlFor="username">
-                      Username
+                      Nombre de Usuario
                     </label>
                   </div>
 
@@ -86,12 +85,12 @@ const Login = () => {
                       onChange={(e) => setPassword(e.target.value)}
                     />
                     <label className="form-label" htmlFor="password">
-                      Password
+                      Constraseña
                     </label>
                   </div>
 
                   <button className="btn btn-outline-light btn-lg px-5" type="submit">
-                    Login
+                    Iniciar Sesión
                   </button>
                 </form>
                 <p className="mt-3">

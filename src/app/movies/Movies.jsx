@@ -54,9 +54,6 @@ const Movies = () => {
     }
   };
 
-  // UPDATED: Modified handleSearch to always use the "query" parameter.
-  // This allows users to type an actor's name (e.g. "Anne Hathaway") and retrieve the matching movie (e.g. "Interstellar"),
-  // assuming the backend search logic supports actor name searches.
   const handleSearch = async () => {
     if (!searchQuery.trim()) {
       fetchMovies();
